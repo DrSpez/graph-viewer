@@ -2,8 +2,6 @@ from flask import Flask
 from flask import render_template
 from flask import request, redirect, url_for, flash
 import os
-import datetime
-import json
 
 import graph as G
 import config as CFG
@@ -19,12 +17,6 @@ app.config['SECRET_KEY'] = CFG.SECRET_KEY
 def root():
     # Check if empty file index, initialize if True
     DB.init_index()
-
-    file_name = request.values.get('file_name')
-    if file_name is not None:
-        file_to_show = os.path.join('static', file_name)
-    else:
-        file_to_show = None
 
     if request.method == 'POST':
         # check if the post request has the file part
@@ -48,16 +40,24 @@ def root():
             os.remove(filename)
 
             # Save graph in d3.js--compatible JSON
-            filename = '.'.join(filename.split('.')[:-1]) + '.json'
+            filename = filename.rsplit('.', 1)[0] + '.json'
             G.write_graph_to_json(graph, filename)
 
             # Update file index file:
             DB.update_index(filename)
 
-            return redirect(url_for('root', file_name=os.path.basename(filename)))
+            return redirect(url_for('root',
+                                    file_name=os.path.basename(filename)))
 
+    # Handle drawing button value
+    file_name = request.values.get('file_name')
+    if file_name is None:
+        file_to_show = None
+    else:
+        file_to_show = os.path.join('static', file_name)
+
+    # Read database state and send it to template
     uploaded_files = DB.read_index()
-
     return render_template('graph.html',
                            files=uploaded_files,
                            data=file_to_show)

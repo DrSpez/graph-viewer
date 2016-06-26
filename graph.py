@@ -1,10 +1,7 @@
 from pyexcel_xlsx import get_data
 import networkx as nx
-import matplotlib
 from matplotlib import pyplot as plt
 import json
-import os
-import pdb
 
 
 def read_excel_graph(filename, draw=False):
@@ -38,6 +35,7 @@ def read_excel_graph(filename, draw=False):
         plt.show(block=False)
 
     return G
+
 
 def write_graph_to_json(graph, save_to):
     Nodes = [{"name": n, "group": 0} for n in graph.nodes()]
