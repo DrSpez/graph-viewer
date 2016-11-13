@@ -1,3 +1,7 @@
+## About:
+A simple web app for interactive graph visualisation.
+Works with .xls graph files.
+
 ## Requirements:
 + flask
 
